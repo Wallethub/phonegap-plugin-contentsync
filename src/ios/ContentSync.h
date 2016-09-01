@@ -16,6 +16,7 @@ enum ErrorCodes {
     CONNECTION_ERR,
     UNZIP_ERR,
     LOCAL_ERR,
+    NOSPACE_ERR
 };
 typedef NSUInteger ErrorCodes;
 

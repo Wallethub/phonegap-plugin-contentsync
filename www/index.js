@@ -275,6 +275,8 @@ module.exports = {
     ERROR_STATE: {
         1: 'INVALID_URL_ERR',
         2: 'CONNECTION_ERR',
-        3: 'UNZIP_ERR'
+        3: 'UNZIP_ERR',
+        4: 'LOCAL_ERR',
+        5: 'NOSPACE_ERR'
     }
 };

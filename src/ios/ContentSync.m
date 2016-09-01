@@ -1,5 +1,6 @@
 #import "ContentSync.h"
-
+#include <sys/param.h>
+#include <sys/mount.h>
 @implementation ContentSyncTask
 
 - (ContentSyncTask *)init {
@@ -92,6 +93,12 @@
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
                 return;
+            }
+            else{
+                BOOL hasSpace=[self checkForSpace:command andFileUrl:[NSURL URLWithString:src]];
+                if (hasSpace==NO) {
+                    return;
+                }
             }
         }
     }
@@ -559,7 +566,37 @@
     });
     return session;
 }
-
+//<added by anubhav
+-(BOOL)checkForSpace:(CDVInvokedUrlCommand*)command andFileUrl:(NSURL*)url{
+    CDVPluginResult *pluginResult = nil;
+    //NSURL *url=[NSURL URLWithString:@"http://scryp.sg/wp-content/uploads/2016/08/Richmond-food-photo-deliveroo.jpg"];
+    float fileSize=[self getFileSize:url];
+    float availSpace=[self getDiskSpace];
+    fileSize+=(fileSize*2)+7000;
+    if(fileSize>=availSpace){
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:NOSPACE_ERR];
+        return NO;
+    }
+    return YES;
+}
+-(float) getFileSize:(NSURL*)fileUrl {
+    NSURL *url = fileUrl;//
+    NSError *error;
+    NSData *data = [NSData dataWithContentsOfURL:url  options:NSDataReadingMappedAlways error:&error];
+    float space= [data length];
+    
+    return space;
+}
+-(float) getDiskSpace {
+    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    struct statfs tStats;
+    statfs([[paths lastObject] cString], &tStats);
+    float total_space = (float)(tStats.f_blocks * tStats.f_bsize);
+    
+    return total_space;
+}
+//</added by anubhav
 @end
 
 /**
