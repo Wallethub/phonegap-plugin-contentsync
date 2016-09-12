@@ -94,15 +94,15 @@
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
                 return;
             }
-            else{
-                BOOL hasSpace=[self checkForSpace:command andFileUrl:[NSURL URLWithString:src]];
-                if (hasSpace==NO) {
-                    return;
-                }
-            }
+            
         }
     }
-
+    if(src!=nil){
+        BOOL hasSpace=[self checkForSpace:command andFileUrl:[NSURL URLWithString:src]];
+        if (hasSpace==NO) {
+            return;
+        }
+    }
 
     __weak ContentSync* weakSelf = self;
 
